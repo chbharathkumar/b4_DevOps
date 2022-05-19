@@ -193,6 +193,7 @@ resource "aws_db_instance" "rds" {
   username             = "${var.rds_username}"
   password             = "${var.rds_password}"
   db_subnet_group_name = "${var.rds_subnet_name}"
+  security_group_names = [ aws_db_security_group.db_sg.id ]   # Terraform documentation lists this as optional/deprecated. Please test and try alternatives to this if needed.
   depends_on = ["aws_db_subnet_group.rds_subnet_group"]
 }
 
@@ -219,6 +220,17 @@ resource "aws_security_group" "webserver_sg" {
 
   tags = {
     Name = "${var.websg_name}"
+  }
+}
+
+# Create RDS Security group and whitelist the above webserver sg
+# Documentation is available here https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_security_group
+
+resource "aws_db_security_group" "db_sg" {
+  name = "allow_webserver"
+
+  ingress {
+    security_group_id = aws_security_group.webserver_sg.id
   }
 }
 

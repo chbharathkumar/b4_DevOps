@@ -188,13 +188,13 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
 # Create security group for webservers
 
 resource "aws_security_group" "webserver_sg" {
-  name        = "allow_http"
+  name        = "allow_https"
   description = "Allow http inbound traffic"
   vpc_id      = "${aws_vpc.default.id}"
 
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 8080
+    to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }

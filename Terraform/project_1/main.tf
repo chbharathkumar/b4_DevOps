@@ -183,19 +183,7 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
   }
 }
 
-# Create RDS instance 
 
-resource "aws_db_instance" "rds" {
-  allocated_storage    = "${var.rds_storage}"
-  engine               = "${var.rds_engine}"
-  instance_class       = "${var.rds_instance_class}"
-  name                 = "${var.rds_name}"
-  username             = "${var.rds_username}"
-  password             = "${var.rds_password}"
-  db_subnet_group_name = "${var.rds_subnet_name}"
-  security_group_names = [ aws_db_security_group.db_sg.id ]   # Terraform documentation lists this as optional/deprecated. Please test and try alternatives to this if needed.
-  depends_on = ["aws_db_subnet_group.rds_subnet_group"]
-}
 
 # Create security group for webservers
 
@@ -226,12 +214,39 @@ resource "aws_security_group" "webserver_sg" {
 # Create RDS Security group and whitelist the above webserver sg
 # Documentation is available here https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_security_group
 
-resource "aws_db_security_group" "db_sg" {
+resource "aws_security_group" "db_sg" {
   name = "allow_webserver"
-
+  vpc_id = "${aws_vpc.default.id}"
   ingress {
-    security_group_id = aws_security_group.webserver_sg.id
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = ["${aws_security_group.webserver_sg.id}"]
   }
+  # Allow all outbound traffic.
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name = "terraform-rds-security-group"
+  }
+}
+
+# Create RDS instance 
+
+resource "aws_db_instance" "rds" {
+  allocated_storage    = "${var.rds_storage}"
+  engine               = "${var.rds_engine}"
+  instance_class       = "${var.rds_instance_class}"
+  name                 = "${var.rds_name}"
+  username             = "${var.rds_username}"
+  password             = "${var.rds_password}"
+  db_subnet_group_name = "${var.rds_subnet_name}"
+  vpc_security_group_ids = ["${aws_security_group.db_sg.id}"]   # Terraform documentation lists this as optional/deprecated. Please test and try alternatives to this if needed.
+  depends_on = ["aws_db_subnet_group.rds_subnet_group"]
 }
 
 # Create EC2 instances for webservers
@@ -240,7 +255,7 @@ resource "aws_instance" "webservers" {
   count           = "${length(var.web_subnets_cidr_blocks)}"
   ami             = "${var.web_ami}"
   instance_type   = "${var.web_instance}"
-  security_groups = ["${aws_security_group.webserver_sg.id}"]
+  security_groups = "${aws_security_group.webserver_sg.*.id}"
   subnet_id       = "${element(aws_subnet.web.*.id,count.index)}"
 
   tags = {

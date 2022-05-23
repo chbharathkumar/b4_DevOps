@@ -20,18 +20,22 @@
  # Building the web application image
    - Dockerfile
   First, we build the image:
+  
   Ex:
   docker build . -f Dockerfile.dev -t mydockerrepo:1234/vehicle-quotes-dev:registry (Please replace your in mydockerrepo:1234)
+  
   docker push localhost:32000/vehicle-quotes-dev:registry
   
   # Web YAML Files
    - web-deployment.yaml
    - web-persistent-volume.yaml
    - web-persistent-volume-claim.yaml
+   
    Note: The only notable element here is the PV’s hostPath. I have it pointing to the path where I downloaded the app’s source code from [GitHub](https://github.com/megakevin/end-point-blog-dotnet-5-web-api). Make sure to do the same on your end.
    - web-service.yaml
    
    Run the above yaml files for web api deployment
+   
 `$ kubectl apply -f web-persistent-volume.yaml`
 
 `$ kubectl apply -f web-persistent-volume-claim.yaml`

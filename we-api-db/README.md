@@ -7,9 +7,12 @@
 - db-service.yaml
 # Applying changes
 `$ kubectl apply -f db-persistent-volume.yaml`
+
 `$ kubectl apply -f db-persistent-volume-claim.yaml`
+
 `$ kubectl apply -f db-deployment.yaml`
-`kubectl apply -f db-service.yaml`
+
+`$ kubectl apply -f db-service.yaml`
 
 
 # 2. Deploying the web application

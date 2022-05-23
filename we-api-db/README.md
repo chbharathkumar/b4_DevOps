@@ -33,8 +33,11 @@
    
    Run the above yaml files for web api deployment
 `$ kubectl apply -f web-persistent-volume.yaml`
+
 `$ kubectl apply -f web-persistent-volume-claim.yaml`
+
 `$ kubectl apply -f web-deployment.yaml`
+
 `$ kubectl apply -f web-service.yaml`
 
 # Starting the application
@@ -42,6 +45,7 @@
 `$ kubectl exec -it pod_name -- bash`
 
 You’ll get a prompt like this:
+
 `vscode ➜ /app (master ✗) $`
 
 Now it’s just a few .NET commands to get the app up and running. First, compile and download packages:

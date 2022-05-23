@@ -28,7 +28,7 @@
    - web-deployment.yaml
    - web-persistent-volume.yaml
    - web-persistent-volume-claim.yaml
-   Note: The only notable element here is the PV’s hostPath. I have it pointing to the path where I downloaded the app’s source code from [GitHub]([https://youtu.be/eB6CDSR8VCA](https://github.com/megakevin/end-point-blog-dotnet-5-web-api)). Make sure to do the same on your end.
+   Note: The only notable element here is the PV’s hostPath. I have it pointing to the path where I downloaded the app’s source code from [GitHub][https://youtu.be/eB6CDSR8VCA](https://github.com/megakevin/end-point-blog-dotnet-5-web-api). Make sure to do the same on your end.
    - web-service.yaml
    
    Run the above yaml files for web api deployment
